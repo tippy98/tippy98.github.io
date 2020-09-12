@@ -14,7 +14,7 @@ icon:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://kiznaiver1998.cn/
+url: https://tippy98.github.io/
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:

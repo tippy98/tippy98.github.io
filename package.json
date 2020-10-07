@@ -7,7 +7,8 @@
     "clean": "hexo clean",
     "deploy": "hexo deploy",
     "server": "hexo server",
-    "gh-publish": "hexo clean && hexo deploy"
+    "gh-publish": "hexo clean && hexo deploy",
+    "category": "hexo new page categories"
   },
   "hexo": {
     "version": "5.1.1"

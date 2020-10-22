@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Tippy&#39;s Time Machine</title>
+  
+  <subtitle>记录成长</subtitle>
+  <link href="https://tippy98.github.io/atom.xml" rel="self"/>
+  
+  <link href="https://tippy98.github.io/"/>
+  <updated>2020-10-22T16:34:31.372Z</updated>
+  <id>https://tippy98.github.io/</id>
+  
+  <author>
+    <name>Tippy</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>更加优雅地使用 git —— 萌新向</title>
+    <link href="https://tippy98.github.io/2020/10/23/%E6%9B%B4%E5%8A%A0%E4%BC%98%E9%9B%85%E5%9C%B0%E4%BD%BF%E7%94%A8%20git%20%E2%80%94%E2%80%94%20%E8%90%8C%E6%96%B0%E4%B8%AA%E4%BA%BA%E5%90%91%2059be3e52e98946eb8682ed75040b82ac/"/>
+    <id>https://tippy98.github.io/2020/10/23/%E6%9B%B4%E5%8A%A0%E4%BC%98%E9%9B%85%E5%9C%B0%E4%BD%BF%E7%94%A8%20git%20%E2%80%94%E2%80%94%20%E8%90%8C%E6%96%B0%E4%B8%AA%E4%BA%BA%E5%90%91%2059be3e52e98946eb8682ed75040b82ac/</id>
+    <published>2020-10-22T16:33:19.000Z</published>
+    <updated>2020-10-22T16:34:31.372Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p> 因为最近工作上终于可以正式提交代码了…但也遇到了一些问题，那就是 git commit 不够规范，merge 合并用的乱七八糟留下了记录，所以就想探索一番，一是让自己明白 commit 如何变得更加优雅，另外一方面是想探究，对于一个团队来说，如何能约束更加规范的 commit。（我相信像我一样刚开始正式工作不大明白 commit 该怎么好好写的人不在少数）</p></blockquote><p>从前的自己完全就是一套独狼风格的 git 工作流，即：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit</span><br><span class="line">git pull origin master</span><br><span class="line">git push</span><br></pre></td></tr></table></figure><p>但这很不规范，commit 会乱写，同时自动合并留下的 commit 会让 commits 变的很杂乱。</p><p>所以作为一个萌新（雾）也应该了解常见的 git workflow 并践行它</p><a id="more"></a><h2 id="对于没做要求的项目"><a href="#对于没做要求的项目" class="headerlink" title="对于没做要求的项目"></a>对于没做要求的项目</h2><h3 id="一人多任务场景"><a href="#一人多任务场景" class="headerlink" title="一人多任务场景"></a>一人多任务场景</h3><p>这个时候，我们可以使用目前最流行的工作流 ——  <a href="http://www.mamicode.com/info-detail-2579638.html">Feature Branching</a>  进行管理。即面对任何新的功能或 bug 全部都新建一个 branch 来写：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git branch master</span><br><span class="line">git checkout -b feature-1</span><br></pre></td></tr></table></figure><p>把对于这个任务的所有的修改都提交到这个分支上：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git add .</span><br><span class="line">git commit / git commit --amend</span><br><span class="line"><span class="comment"># amend 用于对当前提交进行轻微的修改</span></span><br></pre></td></tr></table></figure><p>对于萌新来说，一般是需要团队的导师进行 review 的，所以需要这样操作：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意不要拉取远程 master 的代码</span></span><br><span class="line">git push origin feature-1</span><br></pre></td></tr></table></figure><p>如果导师觉得可以提交的话，对于本地来说，需要进行拉取分支，变基合并（这里由于我们期望的是线性提交，并且不留下 Merge 记录，所以使用 rebase 进行 pull，没有这样要求的团队也可以选择直接 Merge，不加 rebase 参数)，最后提交代码，删除分支：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">git pull --rebase origin master</span><br><span class="line"><span class="comment"># 如果有冲突，解决冲突之后再 git rebase --continue</span></span><br><span class="line"><span class="comment"># 把变基后的 feature-1 推送到主分支</span></span><br><span class="line">git push origin feature-1:master</span><br><span class="line"><span class="comment"># 切换到主分支,把 master 变基到最头部</span></span><br><span class="line">git checkout master</span><br><span class="line">git rebase feature-1</span><br><span class="line"><span class="comment"># 删除分支</span></span><br><span class="line">git branch -D feature-1</span><br><span class="line">git push -d origin feature-1</span><br></pre></td></tr></table></figure><p>对于多任务，我们只需要每个功能都新建一个分支，同上述步骤进行管理就好。当然，导师 review 时也会产生种种问题，大多是这两类：</p><ol><li>提交的 commit message 不规范。</li><li>有 bug 需要修复。</li></ol><p>下面来说一下这两类作为萌新该如何处理。</p><h3 id="提交不规范场景"><a href="#提交不规范场景" class="headerlink" title="提交不规范场景"></a>提交不规范场景</h3><p>使用 <code>git rebase -i</code> 进行 <code>reword</code> 和 <code>squash</code> 操作，整理自己的提交并修改 commit message</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git rebase -i HEAD~x <span class="comment"># x 为需要覆盖的修改范围</span></span><br></pre></td></tr></table></figure><p>再如上述提交步骤提交</p><h3 id="修复-bug-场景"><a href="#修复-bug-场景" class="headerlink" title="修复 bug 场景"></a>修复 bug 场景</h3><p><strong>已经推上去的话：</strong></p><p>对于很简单的 bug修复我们一般直接使用 <code>git commit --amend</code> 直接提交修改再推送上去。</p><p>而对于很复杂的 bug ， 首先我们需要紧急退回带 bug 的版本 <code>git revert bug</code> 再进行修改。</p><p>如果 bug 是由多个提交产生的，那么我们一般需要使用 <code>git rebase -i</code> 做 <code>squash</code> 操作做合并，再使用 <code>git revert HEAD</code> 进行撤回。</p><p><strong>还没有推上去：</strong></p><p>那就很随意了，可以使用 <code>git rebase -i</code> 做 <code>edit</code> 操作，具体操作可以看</p><p><a href="https://blog.csdn.net/qq_39219279/article/details/98489816">https://blog.csdn.net/qq_39219279/article/details/98489816</a></p><p>总而言之，没推上去一切好说，推送上去之后要处理起来就会有一点麻烦。</p><blockquote><p><strong>by the way</strong>: 由于本人比较喜欢 rebase 的工作流，线性提交会看起来非常清晰，并且觉得所有的撤销操作都要留下记录，对于萌新来说留下记录也比较好进行回退。这一套流程个人认为还是相对比较规范的，喜欢 merge 合并/ cherry-pick 修改可以自己取舍~~</p></blockquote><hr><h2 id="对于践行了相应-workflow-的项目："><a href="#对于践行了相应-workflow-的项目：" class="headerlink" title="对于践行了相应 workflow 的项目："></a>对于践行了相应 workflow 的项目：</h2><p>一般团队主要选择的 workflow 有：</p><ul><li><a href="https://zhuanlan.zhihu.com/p/39148914">Github Flow</a></li><li><a href="https://www.jianshu.com/p/41910dc6ef29">Git Flow</a></li></ul><p>这个时候按照规范践行就好啦，不过可以选择 <code>Squash and merge</code> （这个就是 merge 时 带上 <code>--squash</code> 参数，把合并到 develop 分支的 feature 提交合为一个，好处就是能把 feature 里的不规范提交隐藏，看不见就是没有.jpg）和 <code>rebase and merge</code> (这个就是 pull 拉取时带上 <code>--rebase</code> 参数，让 feature 变基到 develop 上进行提交，可以让 develop 提交变成线性，看起来更爽)两种方式，具体怎样看项目负责人要求就好啦~</p><h1 id="附录A-git-的学习教程"><a href="#附录A-git-的学习教程" class="headerlink" title="附录A: git 的学习教程"></a>附录A: git 的学习教程</h1><p><a href="https://learngitbranching.js.org/?locale=zh_CN">Learn Git Branching</a> 每次刷都有新的体验，强烈安利，建议多刷</p><p><a href="https://www.liaoxuefeng.com/wiki/896043488029600">git 教程</a>  学！学就完事！</p><p><a href="">git book</a></p>]]></content>
+    
+    
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt; 因为最近工作上终于可以正式提交代码了…但也遇到了一些问题，那就是 git commit 不够规范，merge 合并用的乱七八糟留下了记录，所以就想探索一番，一是让自己明白 commit 如何变得更加优雅，另外一方面是想探究，对于一个团队来说，如何能约束更加规范的 commit。（我相信像我一样刚开始正式工作不大明白 commit 该怎么好好写的人不在少数）&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;从前的自己完全就是一套独狼风格的 git 工作流，即：&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;git add .&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git commit&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git pull origin master&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;git push&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;p&gt;但这很不规范，commit 会乱写，同时自动合并留下的 commit 会让 commits 变的很杂乱。&lt;/p&gt;
+&lt;p&gt;所以作为一个萌新（雾）也应该了解常见的 git workflow 并践行它&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="TeamWork" scheme="https://tippy98.github.io/categories/TeamWork/"/>
+    
+    
+    <category term="git" scheme="https://tippy98.github.io/tags/git/"/>
+    
+    <category term="TeamWork" scheme="https://tippy98.github.io/tags/TeamWork/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="https://tippy98.github.io/2020/10/07/hello-world/"/>
+    <id>https://tippy98.github.io/2020/10/07/hello-world/</id>
+    <published>2020-10-07T01:21:10.941Z</published>
+    <updated>2020-10-07T01:21:10.941Z</updated>
+    
+    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt; for</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>【CSS】CSS 总结记记录——布局实现篇</title>
+    <link href="https://tippy98.github.io/2020/09/12/%E3%80%90CSS%E3%80%91CSS%E6%80%BB%E7%BB%93%E8%AE%B0%E8%AE%B0%E5%BD%95%E2%80%94%E2%80%94%E5%B8%83%E5%B1%80%E5%AE%9E%E7%8E%B0%E7%AF%87/"/>
+    <id>https://tippy98.github.io/2020/09/12/%E3%80%90CSS%E3%80%91CSS%E6%80%BB%E7%BB%93%E8%AE%B0%E8%AE%B0%E5%BD%95%E2%80%94%E2%80%94%E5%B8%83%E5%B1%80%E5%AE%9E%E7%8E%B0%E7%AF%87/</id>
+    <published>2020-09-12T15:23:19.000Z</published>
+    <updated>2020-10-07T02:31:24.062Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>CSS 总结记录的第一弹——布局实现篇<br>开坑待填，Notion 写了一部分了…<br>CSS 可以说一直是我的大弱项了，自从工作中认知到了这点后，也一直在补，所以博客的第一弹是关于 CSS 的，希望能给大家一点启发……</p></blockquote><a id="more"></a><h2 id="Layout——超经典的两列布局"><a href="#Layout——超经典的两列布局" class="headerlink" title="Layout——超经典的两列布局"></a>Layout——超经典的两列布局</h2><blockquote><p>两列布局可以说超经典了，以前我的错误学习方法就是靠背，因为其实在百度上一搜《两列布局》/ 《布局大全》就是一大堆的代码，以前想着能用就行，就Ctrl + C/V 大法了，但是你会发现你用了就忘记了。但是在新一轮补知识的时候，我发现这东西是有根据的，必须根据各种模型的表现形式，让布局在脑海里可控。</p></blockquote><h3 id="div-布局实现两列布局"><a href="#div-布局实现两列布局" class="headerlink" title="div 布局实现两列布局"></a>div 布局实现两列布局</h3><h4 id="正常实现"><a href="#正常实现" class="headerlink" title="正常实现"></a>正常实现</h4><p>​    说到 div，它就是一块级元素，使用它进行布局主要是利用了它<a href="https://juejin.im/post/6844903854304133127">文档流</a>的特性，<strong>块级元素独占一行，从上往下流动</strong>，但是 div 只有一列，要实现两列布局需要用一个<a href="https://juejin.im/post/6844903854304133127">脱离文档流</a>的元素，盖在 div 的上面，这时候就很容易想到了position和float脱离文档流方案：</p><p><img src="https://photoeditor.oss-cn-chengdu.aliyuncs.com/%E5%9B%BE%E7%89%871.png"></p><p class="codepen" data-height="265" data-theme-id="dark" data-default-tab="css,result" data-user="kiznaiver1998-the-sans" data-slug-hash="dyMKbxa" style="height: 265px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;" data-pen-title="dyMKbxa">  <span>See the Pen <a href="https://codepen.io/kiznaiver1998-the-sans/pen/dyMKbxa">  dyMKbxa</a> by Kiznaiver1998 (<a href="https://codepen.io/kiznaiver1998-the-sans">@kiznaiver1998-the-sans</a>)  on <a href="https://codepen.io">CodePen</a>.</span></p><script async src="https://static.codepen.io/assets/embed/ei.js"></script><p>最后，只需要在下面的块级元素利用<a href="https://juejin.im/post/6844904151411900430#heading-0">盒模型</a>的 <code>margin</code> 进行占位，就实现了两列布局。</p><hr><h4 id="思考1——inline-block"><a href="#思考1——inline-block" class="headerlink" title="思考1——inline-block"></a>思考1——inline-block</h4><p>​    对于文档流，我们很自然会思考另外一个更符合需求的特性——内联元素从左到右流动，到达最右边才会进行换行，而inline-block又为内联元素提供了盒模型的表现形式</p><hr><h4 id="思考2——BFC自适应"><a href="#思考2——BFC自适应" class="headerlink" title="思考2——BFC自适应"></a>思考2——BFC自适应</h4><h3 id="Flex-实现两列布局"><a href="#Flex-实现两列布局" class="headerlink" title="Flex 实现两列布局"></a>Flex 实现两列布局</h3><h3 id="table-amp-grid-实现两列布局"><a href="#table-amp-grid-实现两列布局" class="headerlink" title="table &amp; grid 实现两列布局"></a>table &amp; grid 实现两列布局</h3><h2 id="Layout——超经典的三列布局"><a href="#Layout——超经典的三列布局" class="headerlink" title="Layout——超经典的三列布局"></a>Layout——超经典的三列布局</h2><h2 id="尾声-amp-安利"><a href="#尾声-amp-安利" class="headerlink" title="尾声&amp;安利"></a>尾声&amp;安利</h2><h4 id="Flex-教程安利"><a href="#Flex-教程安利" class="headerlink" title="Flex 教程安利"></a>Flex 教程安利</h4><p><a href="http://flexboxfroggy.com/#zh-cn">flex 学习游戏——送青蛙回家</a>：这个网址侧重教你如何使用。</p><p><a href="http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html">flex 学习教程——阮一峰博客</a>：这个网址侧重原理，理解原理后就能在脑海里模拟出布局的行为了。</p><p><a href="http://www.ruanyifeng.com/blog/2015/07/flex-examples.html">flex 教程实例篇</a>：这个很适合在看完前两个后当做作业，自己实现一遍。</p><h4 id="布局教程安利"><a href="#布局教程安利" class="headerlink" title="布局教程安利"></a>布局教程安利</h4><p><a href="http://nec.netease.com/">nec，更好的 CSS 方案</a></p><p>To be continued……</p>]]></content>
+    
+    
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;CSS 总结记录的第一弹——布局实现篇&lt;br&gt;开坑待填，Notion 写了一部分了…&lt;br&gt;CSS 可以说一直是我的大弱项了，自从工作中认知到了这点后，也一直在补，所以博客的第一弹是关于 CSS 的，希望能给大家一点启发……&lt;/p&gt;
+&lt;/blockquote&gt;</summary>
+    
+    
+    
+    <category term="CSS" scheme="https://tippy98.github.io/categories/CSS/"/>
+    
+    <category term="CSS 总结" scheme="https://tippy98.github.io/categories/CSS/CSS-%E6%80%BB%E7%BB%93/"/>
+    
+    
+    <category term="CSS" scheme="https://tippy98.github.io/tags/CSS/"/>
+    
+  </entry>
+  
+</feed>
